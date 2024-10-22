@@ -46,7 +46,7 @@ wget -qO - https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.g
     | sudo dd of=/usr/share/keyrings/vscodium-archive-keyring.gpg
 echo 'deb [ signed-by=/usr/share/keyrings/vscodium-archive-keyring.gpg ] https://download.vscodium.com/debs vscodium main' \
     | sudo tee /etc/apt/sources.list.d/vscodium.list
-sudo apt update && sudo apt install codium
+sudo apt update && sudo apt install -y codium
 
 sudo apt-get install -y libxcb-cursor0 libfreetype-dev
 sudo -v && wget -nv -O- https://download.calibre-ebook.com/linux-installer.sh | sudo sh /dev/stdin
@@ -55,14 +55,14 @@ wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signa
 cat signal-desktop-keyring.gpg | sudo tee /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
 echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
   sudo tee /etc/apt/sources.list.d/signal-xenial.list
-sudo apt update && sudo apt install signal-desktop
+sudo apt update && sudo apt install -y signal-desktop
 
 # install Element
 sudo apt install -y wget apt-transport-https
 sudo wget -O /usr/share/keyrings/element-io-archive-keyring.gpg https://packages.element.io/debian/element-io-archive-keyring.gpg
 echo "deb [signed-by=/usr/share/keyrings/element-io-archive-keyring.gpg] https://packages.element.io/debian/ default main" | sudo tee /etc/apt/sources.list.d/element-io.list
 sudo apt update
-sudo apt install element-desktop
+sudo apt install -y element-desktop
 
 # install Syncthing
 sudo apt-get install curl
@@ -70,24 +70,24 @@ sudo mkdir -p /etc/apt/keyrings
 sudo curl -L -o /etc/apt/keyrings/syncthing-archive-keyring.gpg https://syncthing.net/release-key.gpg
 echo "deb [signed-by=/etc/apt/keyrings/syncthing-archive-keyring.gpg] https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
 sudo apt-get update
-sudo apt-get install syncthing
+sudo apt-get install -y syncthing
 sudo cp /usr/share/applications/syncthing-start.desktop ~/.config/autostart/
 sudo chown "$USER": syncthing-start.desktop
 
 cd ~/Downloads || exit 1
 wget https://repo.protonvpn.com/debian/dists/stable/main/binary-all/protonvpn-stable-release_1.0.4_all.deb
 sudo dpkg -i ./protonvpn-stable-release_1.0.4_all.deb && sudo apt update
-sudo apt install proton-vpn-gnome-desktop
-sudo apt install libayatana-appindicator3-1 gir1.2-ayatanaappindicator3-0.1 gnome-shell-extension-appindicator
+sudo apt install -y proton-vpn-gnome-desktop
+sudo apt install -y libayatana-appindicator3-1 gir1.2-ayatanaappindicator3-0.1 gnome-shell-extension-appindicator
 
 cd ~/Downloads || exit 1
 wget https://proton.me/download/bridge/protonmail-bridge_3.12.0-1_amd64.deb
-sudo apt install ./protonmail-bridge_3.12.0-1_amd64.deb
+sudo apt install -y ./protonmail-bridge_3.12.0-1_amd64.deb
 
 # Bitbox
 cd ~/Downloads || exit 1
 wget https://github.com/BitBoxSwiss/bitbox-wallet-app/releases/download/v4.44.1/bitbox_4.44.1_amd64.deb
-sudo apt install ./bitbox_4.44.1_amd64.deb
+sudo apt install -y ./bitbox_4.44.1_amd64.deb
 
 # balenaEtcher
 cd ~/Downloads || exit 1
