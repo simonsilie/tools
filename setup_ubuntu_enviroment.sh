@@ -1,5 +1,7 @@
 #!/bin/bash
 
+github_url="https://github.com"
+
 protonvpn_package="protonvpn-stable-release_1.0.4_all.deb"
 protonmail_bridge_package="protonmail-bridge_3.12.0-1_amd64.deb"
 bitbox_version="4.44.1"
@@ -10,6 +12,8 @@ portfolio_version="0.71.2"
 portfolio_tar_gz="PortfolioPerformance-${portfolio_version}-linux.gtk.x86_64.tar.gz"
 veracrypt_version="1.26.14"
 veracrypt_tar_bz2="veracrypt-${veracrypt_version}-setup.tar.bz2"
+standardnotes_version="3.195.12"
+standardnotes_app="standard-notes-${standardnotes_version}-linux-x86_64.AppImage"
 
 sudo apt-get update
 sudo apt-get upgrade
@@ -53,15 +57,18 @@ sudo apt-get install -y torbrowser-launcher
 
 sudo apt-get install -y htop zram-config
 
+# install Codium
 wget -qO - https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg | gpg --dearmor \
     | sudo dd of=/usr/share/keyrings/vscodium-archive-keyring.gpg
 echo 'deb [ signed-by=/usr/share/keyrings/vscodium-archive-keyring.gpg ] https://download.vscodium.com/debs vscodium main' \
     | sudo tee /etc/apt/sources.list.d/vscodium.list
 sudo apt update && sudo apt install -y codium
 
+# install Calibre
 sudo apt-get install -y libxcb-cursor0 libfreetype-dev
 sudo -v && wget -nv -O- https://download.calibre-ebook.com/linux-installer.sh | sudo sh /dev/stdin
 
+# install Signal
 wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
 cat signal-desktop-keyring.gpg | sudo tee /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
 echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
@@ -99,20 +106,20 @@ rm -rf ${protonmail_bridge_package}
 
 # Bitbox
 cd ~/Downloads || exit 1
-wget https://github.com/BitBoxSwiss/bitbox-wallet-app/releases/download/v${bitbox_version}/${bitbox_package}
+wget ${github_url}/BitBoxSwiss/bitbox-wallet-app/releases/download/v${bitbox_version}/${bitbox_package}
 sudo apt install -y ./${bitbox_package}
 rm -rf ${bitbox_package}
 
 # balenaEtcher
 cd ~/Downloads || exit 1
-wget https://github.com/balena-io/etcher/releases/download/v${balenaEtcher_version}/${balenaEtcher_zip}
+wget ${github_url}/balena-io/etcher/releases/download/v${balenaEtcher_version}/${balenaEtcher_zip}
 mkdir -p ~/Applications
 unzip ./${balenaEtcher_zip} -d ~/Applications
 rm -rf ${balenaEtcher_zip}
 
 # portofolioPerformance
 cd ~/Downloads || exit 1
-wget https://github.com/buchen/portfolio/releases/download/${portfolio_version}/${portfolio_tar_gz}
+wget ${github_url}/buchen/portfolio/releases/download/${portfolio_version}/${portfolio_tar_gz}
 mkdir -p ~/Applications
 tar -xvzf ${portfolio_tar_gz} -C ~/Applications
 rm -rf ${portfolio_tar_gz}
@@ -123,14 +130,15 @@ wget https://launchpad.net/veracrypt/trunk/${veracrypt_version}/+download/${vera
 mkdir -p ~/Applications
 tar -xvf ${veracrypt_tar_bz2} -C ~/Downloads
 ./veracrypt-1.26.14-setup-gui-x64
+find  . -name 'veracrypt*' -exec rm {} \;
 
 # AppImages require FUSE to run.
 sudo apt install libfuse2
 
 # Standard Notes
 cd ~/Applications || exit 1
-wget https://github.com/standardnotes/app/releases/download/%40standardnotes/desktop%403.195.12/standard-notes-3.195.12-linux-x86_64.AppImage
-chmod a+x standard-notes-3.195.12-linux-x86_64.AppImage
+wget ${github_url}/standardnotes/app/releases/download/%40standardnotes/desktop%40${standardnotes_version}/${standardnotes_app}
+chmod a+x ${standardnotes_app}
 
 # Antivirus
 sudo apt install -y clamav clamav-daemon
