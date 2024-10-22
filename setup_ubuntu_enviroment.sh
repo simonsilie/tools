@@ -1,5 +1,16 @@
 #!/bin/bash
 
+protonvpn_package="protonvpn-stable-release_1.0.4_all.deb"
+protonmail_bridge_package="protonmail-bridge_3.12.0-1_amd64.deb"
+bitbox_version="4.44.1"
+bitbox_package="bitbox_${bitbox_version}_amd64.deb"
+balenaEtcher_version="1.19.25"
+balenaEtcher_zip="balenaEtcher-linux-x64-${balenaEtcher_version}.zip"
+portfolio_version="0.71.2"
+portfolio_tar_gz="PortfolioPerformance-${portfolio_version}-linux.gtk.x86_64.tar.gz"
+veracrypt_version="1.26.14"
+veracrypt_tar_bz2="veracrypt-${veracrypt_version}-setup.tar.bz2"
+
 sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get purge -y apport
@@ -75,37 +86,42 @@ sudo cp /usr/share/applications/syncthing-start.desktop ~/.config/autostart/
 sudo chown "$USER": syncthing-start.desktop
 
 cd ~/Downloads || exit 1
-wget https://repo.protonvpn.com/debian/dists/stable/main/binary-all/protonvpn-stable-release_1.0.4_all.deb
-sudo dpkg -i ./protonvpn-stable-release_1.0.4_all.deb && sudo apt update
+wget https://repo.protonvpn.com/debian/dists/stable/main/binary-all/${protonvpn_package}
+sudo dpkg -i ./${protonvpn_package} && sudo apt update
 sudo apt install -y proton-vpn-gnome-desktop
 sudo apt install -y libayatana-appindicator3-1 gir1.2-ayatanaappindicator3-0.1 gnome-shell-extension-appindicator
+rm -rf ${protonvpn_package}
 
 cd ~/Downloads || exit 1
-wget https://proton.me/download/bridge/protonmail-bridge_3.12.0-1_amd64.deb
-sudo apt install -y ./protonmail-bridge_3.12.0-1_amd64.deb
+wget https://proton.me/download/bridge/${protonmail_bridge_package}
+sudo apt install -y ./${protonmail_bridge_package}
+rm -rf ${protonmail_bridge_package}
 
 # Bitbox
 cd ~/Downloads || exit 1
-wget https://github.com/BitBoxSwiss/bitbox-wallet-app/releases/download/v4.44.1/bitbox_4.44.1_amd64.deb
-sudo apt install -y ./bitbox_4.44.1_amd64.deb
+wget https://github.com/BitBoxSwiss/bitbox-wallet-app/releases/download/v${bitbox_version}/${bitbox_package}
+sudo apt install -y ./${bitbox_package}
+rm -rf ${bitbox_package}
 
 # balenaEtcher
 cd ~/Downloads || exit 1
-wget https://github.com/balena-io/etcher/releases/download/v1.19.25/balenaEtcher-linux-x64-1.19.25.zip
+wget https://github.com/balena-io/etcher/releases/download/v${balenaEtcher_version}/${balenaEtcher_zip}
 mkdir -p ~/Applications
-unzip ./balenaEtcher-linux-x64-1.19.25.zip -d ~/Applications
+unzip ./${balenaEtcher_zip} -d ~/Applications
+rm -rf ${balenaEtcher_zip}
 
 # portofolioPerformance
 cd ~/Downloads || exit 1
-wget https://github.com/buchen/portfolio/releases/download/0.71.2/PortfolioPerformance-0.71.2-linux.gtk.x86_64.tar.gz
+wget https://github.com/buchen/portfolio/releases/download/${portfolio_version}/${portfolio_tar_gz}
 mkdir -p ~/Applications
-tar -xvzf PortfolioPerformance-0.71.2-linux.gtk.x86_64.tar.gz -C ~/Applications
+tar -xvzf ${portfolio_tar_gz} -C ~/Applications
+rm -rf ${portfolio_tar_gz}
 
 # VeraCrypt
 cd ~/Downloads || exit 1
-wget https://launchpad.net/veracrypt/trunk/1.26.14/+download/veracrypt-1.26.14-setup.tar.bz2
+wget https://launchpad.net/veracrypt/trunk/${veracrypt_version}/+download/${veracrypt_tar_bz2}
 mkdir -p ~/Applications
-tar -xvf veracrypt-1.26.14-setup.tar.bz2 -C ~/Downloads
+tar -xvf ${veracrypt_tar_bz2} -C ~/Downloads
 ./veracrypt-1.26.14-setup-gui-x64
 
 # AppImages require FUSE to run.
