@@ -83,7 +83,7 @@ sudo apt update
 sudo apt install -y element-desktop
 
 # install Syncthing
-sudo apt-get install curl
+sudo apt-get install -y curl
 sudo mkdir -p /etc/apt/keyrings
 sudo curl -L -o /etc/apt/keyrings/syncthing-archive-keyring.gpg https://syncthing.net/release-key.gpg
 echo "deb [signed-by=/etc/apt/keyrings/syncthing-archive-keyring.gpg] https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
@@ -92,6 +92,7 @@ sudo apt-get install -y syncthing
 sudo cp /usr/share/applications/syncthing-start.desktop ~/.config/autostart/
 sudo chown "$USER": syncthing-start.desktop
 
+# install ProtonVPN
 cd ~/Downloads || exit 1
 wget https://repo.protonvpn.com/debian/dists/stable/main/binary-all/${protonvpn_package}
 sudo dpkg -i ./${protonvpn_package} && sudo apt update
@@ -99,6 +100,7 @@ sudo apt install -y proton-vpn-gnome-desktop
 sudo apt install -y libayatana-appindicator3-1 gir1.2-ayatanaappindicator3-0.1 gnome-shell-extension-appindicator
 rm -rf ${protonvpn_package}
 
+# install Protonmail Bridge
 cd ~/Downloads || exit 1
 wget https://proton.me/download/bridge/${protonmail_bridge_package}
 sudo apt install -y ./${protonmail_bridge_package}
