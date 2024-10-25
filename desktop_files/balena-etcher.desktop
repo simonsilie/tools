@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=balenaEtcher
+Exec=/home/simon/Applications/balenaEtcher-linux-x64/balena-etcher --no-sandbox
+Icon=/home/simon/Applications/.icons/balena-etcher.png
+X-Desktop-File-Install-Version=0.27

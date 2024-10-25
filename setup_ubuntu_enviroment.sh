@@ -16,7 +16,7 @@ standardnotes_version="3.195.12"
 standardnotes_app="standard-notes-${standardnotes_version}-linux-x86_64.AppImage"
 
 sudo apt-get update
-sudo apt-get upgrade
+sudo apt-get upgrade -y
 sudo apt-get purge -y apport
 sudo apt-get remove -y popularity-contest
 sudo apt-get autoremove -y
@@ -33,7 +33,7 @@ Package: *
 Pin: origin packages.mozilla.org
 Pin-Priority: 1000
 ' | sudo tee /etc/apt/preferences.d/mozilla 
-sudo apt-get update && sudo apt-get install -y firefox
+sudo apt-get update && sudo apt-get install --allow-downgrades -y firefox
 
 sudo apt-get install -y flatpak gnome-software-plugin-flatpak
 
@@ -125,6 +125,7 @@ wget ${github_url}/buchen/portfolio/releases/download/${portfolio_version}/${por
 mkdir -p ~/Applications
 tar -xvzf ${portfolio_tar_gz} -C ~/Applications
 rm -rf ${portfolio_tar_gz}
+sudo apt install -y default-jre
 
 # VeraCrypt
 cd ~/Downloads || exit 1
@@ -140,7 +141,8 @@ sudo apt install libfuse2
 # Standard Notes
 cd ~/Applications || exit 1
 wget ${github_url}/standardnotes/app/releases/download/%40standardnotes/desktop%40${standardnotes_version}/${standardnotes_app}
-chmod a+x ${standardnotes_app}
+mv ${standardnotes_app} standard-notes-linux-x86_64.AppImage
+chmod a+x standard-notes-linux-x86_64.AppImage
 
 # Antivirus
 sudo apt install -y clamav clamav-daemon
@@ -151,6 +153,8 @@ sudo systemctl start clamav-freshclam
 #clamscan -r -i --remove=yes /
 
 sudo apt-get autoremove
+
+sudo cp ./desktop_files/* /usr/share/applications/
 
 # sort apps by name in launcher
 gsettings set org.gnome.shell app-picker-layout "[]"
