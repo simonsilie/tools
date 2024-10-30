@@ -74,6 +74,7 @@ cat signal-desktop-keyring.gpg | sudo tee /usr/share/keyrings/signal-desktop-key
 echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
   sudo tee /etc/apt/sources.list.d/signal-xenial.list
 sudo apt update && sudo apt install -y signal-desktop
+rm -rf signal-desktop-keyring.gpg
 
 # install Element
 sudo apt install -y wget apt-transport-https
@@ -154,7 +155,8 @@ sudo systemctl start clamav-freshclam
 
 sudo apt-get autoremove
 
-sudo cp ./desktop_files/* /usr/share/applications/
+sudo cp ./desktop_files/* /usr/share/applications
+sudo cp ./desktop_files/.icons ~/Applications/.icons
 
 # sort apps by name in launcher
 gsettings set org.gnome.shell app-picker-layout "[]"
