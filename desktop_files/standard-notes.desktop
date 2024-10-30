@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
 Name=Standard Notes
-Exec=/home/simon/Applications/standard-linux-x86_64.AppImage --no-sandbox
+Exec=/home/simon/Applications/standard-notes-linux-x86_64.AppImage --no-sandbox
 Icon=/home/simon/Applications/.icons/standard-notes-icon.png
 X-Desktop-File-Install-Version=0.27
