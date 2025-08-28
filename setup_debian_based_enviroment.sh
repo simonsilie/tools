@@ -59,7 +59,7 @@ if [ "$distro" = "ubuntu" ]; then
     Pin: origin packages.mozilla.org
     Pin-Priority: 1000
     ' | sudo tee /etc/apt/preferences.d/mozilla 
-    sudo apt-get update && sudo apt-get install --allow-downgrades -y firefox
+    $PKG_UPDATE && sudo $PKG_INSTALL --allow-downgrades firefox
 fi
 
 $PKG_INSTALL flatpak gnome-software-plugin-flatpak
@@ -82,7 +82,15 @@ $PKG_INSTALL bleachbit
 
 $PKG_INSTALL torbrowser-launcher
 
-$PKG_INSTALL htop zram-config
+$PKG_INSTALL htop
+
+if [ "$distro" = "debian" ]; then
+    $PKG_INSTALL zram-tools
+    echo -e "ALGO=zstd\nPERCENT=60" | sudo tee -a /etc/default/zramswap
+    sudo service zramswap reload
+else
+    $PKG_INSTALL zram-config
+fi
 
 # install Codium
 wget -qO - https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg | gpg --dearmor \
@@ -184,6 +192,10 @@ $PKG_AUTOREMOVE
 
 sudo cp ./desktop_files/* /usr/share/applications
 sudo cp ./desktop_files/.icons ~/Applications/.icons
+
+if [ "$distro" = "debian" ]; then
+    $PKG_INSTALL gnome-tweaks gnome-shell-extensions
+fi
 
 # sort apps by name in launcher
 gsettings set org.gnome.shell app-picker-layout "[]"
