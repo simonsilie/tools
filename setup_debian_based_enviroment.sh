@@ -1,5 +1,23 @@
 #!/bin/bash
 
+# Usage and Distro Parsing
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 <distro>"
+    echo "Supported distros: debian, ubuntu, mint"
+    exit 1
+fi
+
+distro=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+
+case "$distro" in
+    debian|ubuntu|mint) ;;
+    *)
+        echo "Unsupported distro: $distro"
+        echo "Supported distros: debian, ubuntu, mint"
+        exit 2
+        ;;
+esac
+
 github_url="https://github.com"
 
 protonvpn_package="protonvpn-stable-release_1.0.4_all.deb"
@@ -15,57 +33,66 @@ veracrypt_tar_bz2="veracrypt-${veracrypt_version}-setup.tar.bz2"
 standardnotes_version="3.195.12"
 standardnotes_app="standard-notes-${standardnotes_version}-linux-x86_64.AppImage"
 
-sudo apt-get update
-sudo apt-get upgrade -y
-sudo apt-get purge -y apport
-sudo apt-get remove -y popularity-contest
-sudo apt-get autoremove -y
+PKG_UPDATE="sudo apt update"
+PKG_UPGRADE="sudo apt upgrade -y"
+PKG_INSTALL="sudo apt install -y"
+PKG_REMOVE="sudo apt remove -y"
+PKG_PURGE="sudo apt purge -y"
+PKG_AUTOREMOVE="sudo apt autoremove -y"
 
-sudo snap remove firefox
-sudo install -d -m 0755 /etc/apt/keyrings
-wget -q https://packages.mozilla.org/apt/repo-signing-key.gpg -O- | sudo tee /etc/apt/keyrings/packages.mozilla.org.asc > /dev/null
-gpg -n -q --import --import-options import-show /etc/apt/keyrings/packages.mozilla.org.asc | awk '/pub/{getline; gsub(/^ +| +$/,""); if($0 == "35BAA0B33E9EB396F59CA838C0BA5CE6DC6315A3") print "\nThe key fingerprint matches ("$0").\n"; else print "\nVerification failed: the fingerprint ("$0") does not match the expected one.\n"}'
-if [ ! -f /etc/apt/sources.list.d/mozilla.list ]; then
-    echo "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main" | sudo tee -a /etc/apt/sources.list.d/mozilla.list > /dev/null
+$PKG_UPDATE
+$PKG_UPGRADE
+$PKG_PURGE apport
+$PKG_REMOVE popularity-contest
+$PKG_AUTOREMOVE
+
+if [ "$distro" = "ubuntu" ]; then
+    sudo snap remove firefox
+    sudo install -d -m 0755 /etc/apt/keyrings
+    wget -q https://packages.mozilla.org/apt/repo-signing-key.gpg -O- | sudo tee /etc/apt/keyrings/packages.mozilla.org.asc > /dev/null
+    gpg -n -q --import --import-options import-show /etc/apt/keyrings/packages.mozilla.org.asc | awk '/pub/{getline; gsub(/^ +| +$/,""); if($0 == "35BAA0B33E9EB396F59CA838C0BA5CE6DC6315A3") print "\nThe key fingerprint matches ("$0").\n"; else print "\nVerification failed: the fingerprint ("$0") does not match the expected one.\n"}'
+    if [ ! -f /etc/apt/sources.list.d/mozilla.list ]; then
+        echo "deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main" | sudo tee -a /etc/apt/sources.list.d/mozilla.list > /dev/null
+    fi
+    echo '
+    Package: *
+    Pin: origin packages.mozilla.org
+    Pin-Priority: 1000
+    ' | sudo tee /etc/apt/preferences.d/mozilla 
+    sudo apt-get update && sudo apt-get install --allow-downgrades -y firefox
 fi
-echo '
-Package: *
-Pin: origin packages.mozilla.org
-Pin-Priority: 1000
-' | sudo tee /etc/apt/preferences.d/mozilla 
-sudo apt-get update && sudo apt-get install --allow-downgrades -y firefox
 
-sudo apt-get install -y flatpak gnome-software-plugin-flatpak
+$PKG_INSTALL flatpak gnome-software-plugin-flatpak
 
-sudo apt-get install -y thunderbird thunderbird-locale-de
+$PKG_INSTALL thunderbird thunderbird-locale-de
 
-sudo apt-get install -y virtualbox virtualbox-qt virtualbox-dkms
+$PKG_INSTALL virtualbox virtualbox-qt virtualbox-dkms
 # -Fix: Can't enumerate USB devices for virtualbox
 sudo usermod -aG vboxusers "$USER"
 
-sudo apt-get install -y keepassxc
+$PKG_INSTALL keepassxc
 
-sudo apt-get install -y nextcloud-desktop
+$PKG_INSTALL nextcloud-desktop
 
-sudo apt-get install -y linphone-desktop
+$PKG_INSTALL linphone-desktop
 
-sudo apt-get install -y meld
+$PKG_INSTALL meld
 
-sudo apt-get install -y bleachbit
+$PKG_INSTALL bleachbit
 
-sudo apt-get install -y torbrowser-launcher
+$PKG_INSTALL torbrowser-launcher
 
-sudo apt-get install -y htop zram-config
+$PKG_INSTALL htop zram-config
 
 # install Codium
 wget -qO - https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg | gpg --dearmor \
     | sudo dd of=/usr/share/keyrings/vscodium-archive-keyring.gpg
 echo 'deb [ signed-by=/usr/share/keyrings/vscodium-archive-keyring.gpg ] https://download.vscodium.com/debs vscodium main' \
     | sudo tee /etc/apt/sources.list.d/vscodium.list
-sudo apt update && sudo apt install -y codium
+$PKG_UPDATE && $PKG_INSTALL codium
 
 # install Calibre
-sudo apt-get install -y libxcb-cursor0 libfreetype-dev
+$PKG_INSTALL libxcb-cursor0 libfreetype-dev
 sudo -v && wget -nv -O- https://download.calibre-ebook.com/linux-installer.sh | sudo sh /dev/stdin
 
 # install Signal
@@ -73,44 +100,44 @@ wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signa
 cat signal-desktop-keyring.gpg | sudo tee /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
 echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
   sudo tee /etc/apt/sources.list.d/signal-xenial.list
-sudo apt update && sudo apt install -y signal-desktop
+$PKG_UPDATE && $PKG_INSTALL signal-desktop
 rm -rf signal-desktop-keyring.gpg
 
 # install Element
-sudo apt install -y wget apt-transport-https
+$PKG_INSTALL wget apt-transport-https
 sudo wget -O /usr/share/keyrings/element-io-archive-keyring.gpg https://packages.element.io/debian/element-io-archive-keyring.gpg
 echo "deb [signed-by=/usr/share/keyrings/element-io-archive-keyring.gpg] https://packages.element.io/debian/ default main" | sudo tee /etc/apt/sources.list.d/element-io.list
-sudo apt update
-sudo apt install -y element-desktop
+$PKG_UPDATE
+$PKG_INSTALL element-desktop
 
 # install Syncthing
-sudo apt-get install -y curl
+$PKG_INSTALL -y curl
 sudo mkdir -p /etc/apt/keyrings
 sudo curl -L -o /etc/apt/keyrings/syncthing-archive-keyring.gpg https://syncthing.net/release-key.gpg
 echo "deb [signed-by=/etc/apt/keyrings/syncthing-archive-keyring.gpg] https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
-sudo apt-get update
-sudo apt-get install -y syncthing
+$PKG_UPDATE
+$PKG_INSTALL -y syncthing
 sudo cp /usr/share/applications/syncthing-start.desktop ~/.config/autostart/
 sudo chown "$USER": syncthing-start.desktop
 
 # install ProtonVPN
 cd ~/Downloads || exit 1
 wget https://repo.protonvpn.com/debian/dists/stable/main/binary-all/${protonvpn_package}
-sudo dpkg -i ./${protonvpn_package} && sudo apt update
-sudo apt install -y proton-vpn-gnome-desktop
-sudo apt install -y libayatana-appindicator3-1 gir1.2-ayatanaappindicator3-0.1 gnome-shell-extension-appindicator
+sudo dpkg -i ./${protonvpn_package} && $PKG_UPDATE
+$PKG_INSTALL proton-vpn-gnome-desktop
+$PKG_INSTALL libayatana-appindicator3-1 gir1.2-ayatanaappindicator3-0.1 gnome-shell-extension-appindicator
 rm -rf ${protonvpn_package}
 
 # install Protonmail Bridge
 cd ~/Downloads || exit 1
 wget https://proton.me/download/bridge/${protonmail_bridge_package}
-sudo apt install -y ./${protonmail_bridge_package}
+$PKG_INSTALL ./${protonmail_bridge_package}
 rm -rf ${protonmail_bridge_package}
 
 # Bitbox
 cd ~/Downloads || exit 1
 wget ${github_url}/BitBoxSwiss/bitbox-wallet-app/releases/download/v${bitbox_version}/${bitbox_package}
-sudo apt install -y ./${bitbox_package}
+$PKG_INSTALL ./${bitbox_package}
 rm -rf ${bitbox_package}
 
 # balenaEtcher
@@ -126,7 +153,7 @@ wget ${github_url}/buchen/portfolio/releases/download/${portfolio_version}/${por
 mkdir -p ~/Applications
 tar -xvzf ${portfolio_tar_gz} -C ~/Applications
 rm -rf ${portfolio_tar_gz}
-sudo apt install -y default-jre
+$PKG_INSTALL default-jre
 
 # VeraCrypt
 cd ~/Downloads || exit 1
@@ -137,7 +164,7 @@ tar -xvf ${veracrypt_tar_bz2} -C ~/Downloads
 find  . -name 'veracrypt*' -exec rm {} \;
 
 # AppImages require FUSE to run.
-sudo apt install libfuse2
+$PKG_INSTALL libfuse2
 
 # Standard Notes
 cd ~/Applications || exit 1
@@ -146,14 +173,14 @@ mv ${standardnotes_app} standard-notes-linux-x86_64.AppImage
 chmod a+x standard-notes-linux-x86_64.AppImage
 
 # Antivirus
-sudo apt install -y clamav clamav-daemon
+$PKG_INSTALL clamav clamav-daemon
 sudo systemctl stop clamav-freshclam
 sudo freshclam
 sudo systemctl start clamav-freshclam
 #clamscan -r -i /
 #clamscan -r -i --remove=yes /
 
-sudo apt-get autoremove
+$PKG_AUTOREMOVE
 
 sudo cp ./desktop_files/* /usr/share/applications
 sudo cp ./desktop_files/.icons ~/Applications/.icons
