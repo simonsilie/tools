@@ -12,12 +12,10 @@ distro=$(echo "$1" | tr '[:upper:]' '[:lower:]')
 GITHUB_URL="https://github.com"
 BITBOX_VERSION="4.44.1"
 BITBOX_PACKAGE="bitbox_${BITBOX_VERSION}_amd64.deb"
-balenaEtcher_version="1.19.25"
-balenaEtcher_zip="balenaEtcher-linux-x64-${balenaEtcher_version}.zip"
-portfolio_version="0.71.2"
-portfolio_tar_gz="PortfolioPerformance-${portfolio_version}-linux.gtk.x86_64.tar.gz"
-veracrypt_version="1.26.14"
-veracrypt_tar_bz2="veracrypt-${veracrypt_version}-setup.tar.bz2"
+BALENAETCHER_VERSION="1.19.25"
+BALENAETCHER_ZIP="balenaEtcher-linux-x64-${BALENAETCHER_VERSION}.zip"
+PORTFOLIO_VERSION="0.71.2"
+PORTFOLIO_TAR_GZ="PortfolioPerformance-${PORTFOLIO_VERSION}-linux.gtk.x86_64.tar.gz"
 PKG_UPDATE="sudo apt update"
 PKG_UPGRADE="sudo apt upgrade -y"
 PKG_INSTALL="sudo apt install -y"
@@ -99,12 +97,12 @@ $PKG_UPDATE
 $PKG_INSTALL element-desktop
 
 # install Syncthing
-$PKG_INSTALL -y curl
+$PKG_INSTALL curl
 sudo mkdir -p /etc/apt/keyrings
 sudo curl -L -o /etc/apt/keyrings/syncthing-archive-keyring.gpg https://syncthing.net/release-key.gpg
 echo "deb [signed-by=/etc/apt/keyrings/syncthing-archive-keyring.gpg] https://apt.syncthing.net/ syncthing stable" | sudo tee /etc/apt/sources.list.d/syncthing.list
 $PKG_UPDATE
-$PKG_INSTALL -y syncthing
+$PKG_INSTALL syncthing
 sudo cp /usr/share/applications/syncthing-start.desktop ~/.config/autostart/
 sudo chown "$USER": syncthing-start.desktop
 
@@ -116,17 +114,17 @@ rm -rf ${BITBOX_PACKAGE}
 
 # balenaEtcher
 cd ~/Downloads || exit 1
-wget ${GITHUB_URL}/balena-io/etcher/releases/download/v${balenaEtcher_version}/${balenaEtcher_zip}
+wget ${GITHUB_URL}/balena-io/etcher/releases/download/v${BALENAETCHER_VERSION}/${BALENAETCHER_ZIP}
 mkdir -p ~/Applications
-unzip ./${balenaEtcher_zip} -d ~/Applications
-rm -rf ${balenaEtcher_zip}
+unzip ./${BALENAETCHER_ZIP} -d ~/Applications
+rm -rf ${BALENAETCHER_ZIP}
 
 # portofolioPerformance
 cd ~/Downloads || exit 1
-wget ${GITHUB_URL}/buchen/portfolio/releases/download/${portfolio_version}/${portfolio_tar_gz}
+wget ${GITHUB_URL}/buchen/portfolio/releases/download/${PORTFOLIO_VERSION}/${PORTFOLIO_TAR_GZ}
 mkdir -p ~/Applications
-tar -xvzf ${portfolio_tar_gz} -C ~/Applications
-rm -rf ${portfolio_tar_gz}
+tar -xvzf ${PORTFOLIO_TAR_GZ} -C ~/Applications
+rm -rf ${PORTFOLIO_TAR_GZ}
 $PKG_INSTALL default-jre
 
 # Antivirus
