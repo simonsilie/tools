@@ -79,8 +79,6 @@ flatpak install flathub org.standardnotes.standardnotes -y
 
 $PKG_INSTALL virt-manager
 
-$PKG_INSTALL linphone-desktop
-
 $PKG_INSTALL bleachbit
 
 $PKG_INSTALL htop
