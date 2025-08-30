@@ -141,8 +141,8 @@ sudo systemctl start clamav-freshclam
 
 $PKG_AUTOREMOVE
 
-sudo cp ./desktop_files/* /usr/share/applications
-sudo cp ./desktop_files/.icons ~/Applications/.icons
+sudo cp -r ./desktop_files/* /usr/share/applications
+sudo cp -r ./desktop_files/.icons ~/Applications/.icons
 
 # sort apps by name in launcher
 gsettings set org.gnome.shell app-picker-layout "[]"
