@@ -62,7 +62,7 @@ flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.f
 
 flatpak install flathub org.gnome.Extensions -y
 flatpak install flathub org.gnome.Firmware -y
-flatpak install flathub org.gnome.meld
+flatpak install flathub org.gnome.meld -y
 flatpak install flathub org.mozilla.Thunderbird -y
 flatpak install flathub org.keepassxc.KeePassXC -y
 flatpak install flathub com.nextcloud.desktopclient.nextcloud -y
@@ -75,7 +75,7 @@ flatpak install flathub com.protonvpn.www -y
 flatpak install flathub ch.protonmail.protonmail-bridge -y
 flatpak install flathub com.jetbrains.PyCharm-Community
 flatpak install flathub com.calibre_ebook.calibre -y
-flatpak install flathub org.standardnotes.standardnotes
+flatpak install flathub org.standardnotes.standardnotes -y
 
 $PKG_INSTALL virt-manager
 
@@ -131,14 +131,6 @@ tar -xvzf ${portfolio_tar_gz} -C ~/Applications
 rm -rf ${portfolio_tar_gz}
 $PKG_INSTALL default-jre
 
-# VeraCrypt
-cd ~/Downloads || exit 1
-wget https://launchpad.net/veracrypt/trunk/${veracrypt_version}/+download/${veracrypt_tar_bz2}
-mkdir -p ~/Applications
-tar -xvf ${veracrypt_tar_bz2} -C ~/Downloads
-./veracrypt-1.26.14-setup-gui-x64
-find  . -name 'veracrypt*' -exec rm {} \;
-
 # Antivirus
 $PKG_INSTALL clamav clamav-daemon
 sudo systemctl stop clamav-freshclam
@@ -148,6 +140,9 @@ sudo systemctl start clamav-freshclam
 #clamscan -r -i --remove=yes /
 
 $PKG_AUTOREMOVE
+
+sudo cp ./desktop_files/* /usr/share/applications
+sudo cp ./desktop_files/.icons ~/Applications/.icons
 
 # sort apps by name in launcher
 gsettings set org.gnome.shell app-picker-layout "[]"
